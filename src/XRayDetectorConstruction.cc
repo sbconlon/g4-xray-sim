@@ -36,7 +36,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4PVReplica.hh"
-#include "G4GlobalMagFieldMessenger.hh"
+//#include "G4GlobalMagFieldMessenger.hh"
 #include "G4AutoDelete.hh"
 
 #include "G4GeometryManager.hh"
@@ -52,8 +52,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4ThreadLocal 
-G4GlobalMagFieldMessenger* XRayDetectorConstruction::fMagFieldMessenger = nullptr; 
+//G4ThreadLocal 
+//G4GlobalMagFieldMessenger* XRayDetectorConstruction::fMagFieldMessenger = nullptr; 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -88,18 +88,28 @@ void XRayDetectorConstruction::DefineMaterials()
 { 
   // Lead material defined using NIST Manager
   auto nistManager = G4NistManager::Instance();
-  nistManager->FindOrBuildMaterial("G4_Pb");
+
+  // Add World material
+  nistManager->FindOrBuildMaterial("G4_AIR");
+
+  // Add Target material
+  nistManager->FindOrBuildMaterial("G4_Ti");
+
+  // Add Detector material
+  nistManager->FindOrBuildMaterial("G4_AIR");
+
+  //nistManager->FindOrBuildMaterial("G4_Pb");
   
   // Liquid argon material
-  G4double a;  // mass of a mole;
-  G4double z;  // z=mean number of protons;  
-  G4double density; 
-  new G4Material("liquidArgon", z=18., a= 39.95*g/mole, density= 1.390*g/cm3);
+  //G4double a;  // mass of a mole;
+  //G4double z;  // z=mean number of protons;  
+  //G4double density; 
+  //new G4Material("liquidArgon", z=18., a= 39.95*g/mole, density= 1.390*g/cm3);
          // The argon by NIST Manager is a gas with a different density
 
   // Vacuum
-  new G4Material("Galactic", z=1., a=1.01*g/mole,density= universe_mean_density,
-                  kStateGas, 2.73*kelvin, 3.e-18*pascal);
+  //new G4Material("Galactic", z=1., a=1.01*g/mole,density= universe_mean_density,
+  //                kStateGas, 2.73*kelvin, 3.e-18*pascal);
 
   // Print materials
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
@@ -110,20 +120,22 @@ void XRayDetectorConstruction::DefineMaterials()
 G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
 {
   // Geometry parameters
-  G4int nofLayers = 10;
-  G4double absoThickness = 10.*mm;
-  G4double gapThickness =  5.*mm;
-  G4double calorSizeXY  = 10.*cm;
+  //G4int nofLayers = 10;
+  G4double absoThickness = 1.*cm;
+  G4double gapThickness =  1.*nm;
+  G4double absoSizeXY = 5.*cm;
+  G4double gapSizeXY = 2.*cm;
 
-  auto layerThickness = absoThickness + gapThickness;
-  auto calorThickness = nofLayers * layerThickness;
-  auto worldSizeXY = 1.2 * calorSizeXY;
-  auto worldSizeZ  = 1.2 * calorThickness; 
+  //auto layerThickness = absoThickness + gapThickness;
+  //auto calorThickness = nofLayers * layerThickness;
+  //auto worldSizeXY = 1.2 * calorSizeXY;
+  //auto worldSizeZ  = 1.2 * calorThickness;
+  G4double worldSizeXYZ = 20.*cm;
   
   // Get materials
-  auto defaultMaterial = G4Material::GetMaterial("Galactic");
-  auto absorberMaterial = G4Material::GetMaterial("G4_Pb");
-  auto gapMaterial = G4Material::GetMaterial("liquidArgon");
+  auto defaultMaterial = G4Material::GetMaterial("G4_AIR");
+  auto absorberMaterial = G4Material::GetMaterial("G4_Ti");
+  auto gapMaterial = G4Material::GetMaterial("G4_AIR");
   
   if ( ! defaultMaterial || ! absorberMaterial || ! gapMaterial ) {
     G4ExceptionDescription msg;
@@ -137,7 +149,7 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
   //
   auto worldS 
     = new G4Box("World",           // its name
-                 worldSizeXY/2, worldSizeXY/2, worldSizeZ/2); // its size
+                 worldSizeXYZ/2, worldSizeXYZ/2, worldSizeXYZ/2); // its size
                          
   auto worldLV
     = new G4LogicalVolume(
@@ -154,7 +166,9 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
                  0,                // its mother  volume
                  false,            // no boolean operation
                  0,                // copy number
-                 fCheckOverlaps);  // checking overlaps 
+                 fCheckOverlaps);  // checking overlaps
+
+  /*
   
   //                               
   // Calorimeter
@@ -199,13 +213,15 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
                  kZAxis,           // axis of replication
                  nofLayers,        // number of replica
                  layerThickness);  // witdth of replica
+
+  */
   
   //                               
   // Absorber
   //
   auto absorberS 
     = new G4Box("Abso",            // its name
-                 calorSizeXY/2, calorSizeXY/2, absoThickness/2); // its size
+                 absoSizeXY/2, absoSizeXY/2, absoThickness/2); // its size
                          
   auto absorberLV
     = new G4LogicalVolume(
@@ -216,10 +232,11 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
   fAbsorberPV
     = new G4PVPlacement(
                  0,                // no rotation
-                 G4ThreeVector(0., 0., -gapThickness/2), // its position
+                 //G4ThreeVector(0., 0., -gapThickness/2), // its position
+                 G4ThreeVector(0., 0., -3.*cm),
                  absorberLV,       // its logical volume                         
                  "Abso",           // its name
-                 layerLV,          // its mother  volume
+                 worldLV,          // its mother  volume
                  false,            // no boolean operation
                  0,                // copy number
                  fCheckOverlaps);  // checking overlaps 
@@ -229,7 +246,7 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
   //
   auto gapS 
     = new G4Box("Gap",             // its name
-                 calorSizeXY/2, calorSizeXY/2, gapThickness/2); // its size
+                 gapSizeXY/2, gapSizeXY/2, gapThickness/2); // its size
                          
   auto gapLV
     = new G4LogicalVolume(
@@ -240,14 +257,16 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
   fGapPV
     = new G4PVPlacement(
                  0,                // no rotation
-                 G4ThreeVector(0., 0., absoThickness/2), // its position
+                 //G4ThreeVector(0., 0., absoThickness/2), // its position
+                 G4ThreeVector(3.*cm, 0., 0.),
                  gapLV,            // its logical volume                         
                  "Gap",            // its name
-                 layerLV,          // its mother  volume
+                 worldLV,          // its mother  volume
                  false,            // no boolean operation
                  0,                // copy number
                  fCheckOverlaps);  // checking overlaps 
   
+  /*
   //
   // print parameters
   //
@@ -259,16 +278,18 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
     << " + "
     << gapThickness/mm << "mm of " << gapMaterial->GetName() << " ] " << G4endl
     << "------------------------------------------------------------" << G4endl;
+  */
   
   //                                        
   // Visualization attributes
   //
+  /*
   worldLV->SetVisAttributes (G4VisAttributes::GetInvisible());
 
   auto simpleBoxVisAtt= new G4VisAttributes(G4Colour(1.0,1.0,1.0));
   simpleBoxVisAtt->SetVisibility(true);
   calorLV->SetVisAttributes(simpleBoxVisAtt);
-
+  */
   //
   // Always return the physical World
   //
@@ -276,7 +297,7 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+/*
 void XRayDetectorConstruction::ConstructSDandField()
 { 
   // Create global magnetic field messenger.
@@ -289,5 +310,5 @@ void XRayDetectorConstruction::ConstructSDandField()
   // Register the field messenger for deleting
   G4AutoDelete::Register(fMagFieldMessenger);
 }
-
+*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

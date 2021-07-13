@@ -54,7 +54,7 @@ XRayPrimaryGeneratorAction::XRayPrimaryGeneratorAction()
   auto particleDefinition 
     = G4ParticleTable::GetParticleTable()->FindParticle("e-");
   fParticleGun->SetParticleDefinition(particleDefinition);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(1.,0.,-1.));
   fParticleGun->SetParticleEnergy(50.*MeV);
 }
 
@@ -98,7 +98,7 @@ void XRayPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   // Set gun position
   fParticleGun
-    ->SetParticlePosition(G4ThreeVector(0., 0., -worldZHalfLength));
+    ->SetParticlePosition(G4ThreeVector(-3.*cm, 0., 0.));
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }

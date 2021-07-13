@@ -58,7 +58,7 @@ class XRayDetectorConstruction : public G4VUserDetectorConstruction
 
   public:
     virtual G4VPhysicalVolume* Construct();
-    virtual void ConstructSDandField();
+    //virtual void ConstructSDandField();
 
     // get methods
     //
@@ -73,7 +73,7 @@ class XRayDetectorConstruction : public G4VUserDetectorConstruction
   
     // data members
     //
-    static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
+    //static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
                                       // magnetic field messenger
      
     G4VPhysicalVolume*   fAbsorberPV; // the absorber physical volume
