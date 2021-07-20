@@ -36,6 +36,15 @@ RUN apt-get install -y libqt5opengl5
 # Installing Expat
 RUN apt-get install -y expat
 
+# Install ROOT dependencies
+RUN apt-get install -y libxpm4
+
+# Install Pre-Compiled Binaries for ROOT
+RUN wget https://root.cern/download/root_v6.24.02.Linux-ubuntu18-x86_64-gcc7.5.tar.gz
+RUN tar -xf root_v6.24.02.Linux-ubuntu18-x86_64-gcc7.5.tar.gz
+USER root
+RUN source ./root/bin/thisroot.sh
+
 # Building and Installing G4
 RUN mkdir geant4.10.07.p02-build && mkdir geant4.10.07.p02-install
 WORKDIR ./geant4.10.07.p02-build
