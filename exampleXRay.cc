@@ -29,12 +29,13 @@
 
 #include "XRayDetectorConstruction.hh"
 #include "XRayActionInitialization.hh"
+#include "XRayPhysicsList.hh"
 
 #include "G4RunManagerFactory.hh"
 
 #include "G4UImanager.hh"
 #include "G4UIcommand.hh"
-#include "FTFP_BERT.hh"
+//#include "FTFP_BERT.hh"
 
 #include "Randomize.hh"
 
@@ -108,8 +109,7 @@ int main(int argc,char** argv)
   auto detConstruction = new XRayDetectorConstruction();
   runManager->SetUserInitialization(detConstruction);
 
-  auto physicsList = new FTFP_BERT;
-  runManager->SetUserInitialization(physicsList);
+  runManager->SetUserInitialization(new XRayPhysicsList());
     
   auto actionInitialization = new XRayActionInitialization(detConstruction);
   runManager->SetUserInitialization(actionInitialization);
