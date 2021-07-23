@@ -50,28 +50,29 @@ class XRayEventAction : public G4UserEventAction
     virtual void  BeginOfEventAction(const G4Event* event);
     virtual void    EndOfEventAction(const G4Event* event);
     
-    void AddAbs(G4double de, G4double dl);
-    void AddGap(G4double de, G4double dl);
+    void AddDet(G4double E);
+    //void AddGap(G4double de, G4double dl);
     
   private:
-    G4double  fEnergyAbs;
-    G4double  fEnergyGap;
-    G4double  fTrackLAbs; 
-    G4double  fTrackLGap;
+    //G4AnalysisManager* fAnalysisManager;
+    G4double  fEnergyDet;
+    //G4double  fEnergyGap;
+    //G4double  fTrackLAbs; 
+    //G4double  fTrackLGap;
 };
 
 // inline functions
 
-inline void XRayEventAction::AddAbs(G4double de, G4double dl) {
-  fEnergyAbs += de; 
-  fTrackLAbs += dl;
+inline void XRayEventAction::AddDet(G4double E) {
+  if(fEnergyDet == 0.)
+    fEnergyDet = E;
 }
-
+/*
 inline void XRayEventAction::AddGap(G4double de, G4double dl) {
   fEnergyGap += de; 
   fTrackLGap += dl;
 }
-                     
+*/                   
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

@@ -38,6 +38,8 @@ RUN apt-get install -y expat
 
 # Install ROOT dependencies
 RUN apt-get install -y libxpm4
+RUN apt-get install -y libxft-dev
+RUN apt-get install -y libtbb-dev
 
 # Install Pre-Compiled Binaries for ROOT
 RUN wget https://root.cern/download/root_v6.24.02.Linux-ubuntu18-x86_64-gcc7.5.tar.gz

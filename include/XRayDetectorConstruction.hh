@@ -58,12 +58,11 @@ class XRayDetectorConstruction : public G4VUserDetectorConstruction
 
   public:
     virtual G4VPhysicalVolume* Construct();
-    //virtual void ConstructSDandField();
 
     // get methods
     //
-    const G4VPhysicalVolume* GetAbsorberPV() const;
-    const G4VPhysicalVolume* GetGapPV() const;
+    const G4VPhysicalVolume* GetTargetPV() const;
+    const G4VPhysicalVolume* GetDetectorPV() const;
      
   private:
     // methods
@@ -76,20 +75,20 @@ class XRayDetectorConstruction : public G4VUserDetectorConstruction
     //static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
                                       // magnetic field messenger
      
-    G4VPhysicalVolume*   fAbsorberPV; // the absorber physical volume
-    G4VPhysicalVolume*   fGapPV;      // the gap physical volume
+    G4VPhysicalVolume*   fTargetPV; // the target physical volume
+    G4VPhysicalVolume*   fDetectorPV;    // the gap physical volume
     
     G4bool  fCheckOverlaps; // option to activate checking of volumes overlaps
 };
 
 // inline functions
 
-inline const G4VPhysicalVolume* XRayDetectorConstruction::GetAbsorberPV() const { 
-  return fAbsorberPV; 
+inline const G4VPhysicalVolume* XRayDetectorConstruction::GetTargetPV() const { 
+  return fTargetPV; 
 }
 
-inline const G4VPhysicalVolume* XRayDetectorConstruction::GetGapPV() const  { 
-  return fGapPV; 
+inline const G4VPhysicalVolume* XRayDetectorConstruction::GetDetectorPV() const  { 
+  return fDetectorPV; 
 }
      
 

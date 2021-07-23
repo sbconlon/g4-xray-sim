@@ -59,8 +59,8 @@
 
 XRayDetectorConstruction::XRayDetectorConstruction()
  : G4VUserDetectorConstruction(),
-   fAbsorberPV(nullptr),
-   fGapPV(nullptr),
+   fTargetPV(nullptr),
+   fDetectorPV(nullptr),
    fCheckOverlaps(true)
 {
 }
@@ -121,23 +121,19 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
 {
   // Geometry parameters
   //G4int nofLayers = 10;
-  G4double absoThickness = 1.*cm;
-  G4double gapThickness =  1.*nm;
-  G4double absoSizeXY = 5.*cm;
-  G4double gapSizeXY = 2.*cm;
+  G4double targetThickness = .001*mm;
+  G4double detectorThickness =  1.*nm;
+  G4double targetSizeXY = 5.*cm;
+  G4double detectorSizeXY = 2.*cm;
 
-  //auto layerThickness = absoThickness + gapThickness;
-  //auto calorThickness = nofLayers * layerThickness;
-  //auto worldSizeXY = 1.2 * calorSizeXY;
-  //auto worldSizeZ  = 1.2 * calorThickness;
   G4double worldSizeXYZ = 20.*cm;
   
   // Get materials
   auto defaultMaterial = G4Material::GetMaterial("G4_AIR");
-  auto absorberMaterial = G4Material::GetMaterial("G4_Ti");
-  auto gapMaterial = G4Material::GetMaterial("G4_AIR");
+  auto targetMaterial = G4Material::GetMaterial("G4_Ti");
+  auto detectorMaterial = G4Material::GetMaterial("G4_AIR");
   
-  if ( ! defaultMaterial || ! absorberMaterial || ! gapMaterial ) {
+  if ( ! defaultMaterial || ! targetMaterial || ! detectorMaterial ) {
     G4ExceptionDescription msg;
     msg << "Cannot retrieve materials already defined."; 
     G4Exception("XRayDetectorConstruction::DefineVolumes()",
@@ -167,132 +163,55 @@ G4VPhysicalVolume* XRayDetectorConstruction::DefineVolumes()
                  false,            // no boolean operation
                  0,                // copy number
                  fCheckOverlaps);  // checking overlaps
-
-  /*
   
   //                               
-  // Calorimeter
-  //  
-  auto calorimeterS
-    = new G4Box("Calorimeter",     // its name
-                 calorSizeXY/2, calorSizeXY/2, calorThickness/2); // its size
-                         
-  auto calorLV
-    = new G4LogicalVolume(
-                 calorimeterS,     // its solid
-                 defaultMaterial,  // its material
-                 "Calorimeter");   // its name
-                                   
-  new G4PVPlacement(
-                 0,                // no rotation
-                 G4ThreeVector(),  // at (0,0,0)
-                 calorLV,          // its logical volume                         
-                 "Calorimeter",    // its name
-                 worldLV,          // its mother  volume
-                 false,            // no boolean operation
-                 0,                // copy number
-                 fCheckOverlaps);  // checking overlaps 
-  
-  //                                 
-  // Layer
+  // Target
   //
-  auto layerS 
-    = new G4Box("Layer",           // its name
-                 calorSizeXY/2, calorSizeXY/2, layerThickness/2); // its size
+  auto targetS 
+    = new G4Box("Target",            // its name
+                 targetSizeXY/2, targetSizeXY/2, targetThickness/2); // its size
                          
-  auto layerLV
+  auto targetLV
     = new G4LogicalVolume(
-                 layerS,           // its solid
-                 defaultMaterial,  // its material
-                 "Layer");         // its name
-
-  new G4PVReplica(
-                 "Layer",          // its name
-                 layerLV,          // its logical volume
-                 calorLV,          // its mother
-                 kZAxis,           // axis of replication
-                 nofLayers,        // number of replica
-                 layerThickness);  // witdth of replica
-
-  */
-  
-  //                               
-  // Absorber
-  //
-  auto absorberS 
-    = new G4Box("Abso",            // its name
-                 absoSizeXY/2, absoSizeXY/2, absoThickness/2); // its size
-                         
-  auto absorberLV
-    = new G4LogicalVolume(
-                 absorberS,        // its solid
-                 absorberMaterial, // its material
-                 "Abso");          // its name
+                 targetS,        // its solid
+                 targetMaterial, // its material
+                 "Target");          // its name
                                    
-  fAbsorberPV
+  fTargetPV
     = new G4PVPlacement(
                  0,                // no rotation
-                 //G4ThreeVector(0., 0., -gapThickness/2), // its position
                  G4ThreeVector(0., 0., -3.*cm),
-                 absorberLV,       // its logical volume                         
-                 "Abso",           // its name
+                 targetLV,       // its logical volume                         
+                 "Target",           // its name
                  worldLV,          // its mother  volume
                  false,            // no boolean operation
                  0,                // copy number
                  fCheckOverlaps);  // checking overlaps 
 
   //                               
-  // Gap
+  // Detector
   //
-  auto gapS 
-    = new G4Box("Gap",             // its name
-                 gapSizeXY/2, gapSizeXY/2, gapThickness/2); // its size
+  auto detectorS 
+    = new G4Box("Detector",             // its name
+                 detectorSizeXY/2, detectorSizeXY/2, detectorThickness/2); // its size
                          
-  auto gapLV
+  auto detectorLV
     = new G4LogicalVolume(
-                 gapS,             // its solid
-                 gapMaterial,      // its material
-                 "Gap");           // its name
+                 detectorS,             // its solid
+                 detectorMaterial,      // its material
+                 "Detector");           // its name
                                    
-  fGapPV
+  fDetectorPV
     = new G4PVPlacement(
                  0,                // no rotation
-                 //G4ThreeVector(0., 0., absoThickness/2), // its position
                  G4ThreeVector(3.*cm, 0., 0.),
-                 gapLV,            // its logical volume                         
-                 "Gap",            // its name
+                 detectorLV,            // its logical volume                         
+                 "Detector",            // its name
                  worldLV,          // its mother  volume
                  false,            // no boolean operation
                  0,                // copy number
                  fCheckOverlaps);  // checking overlaps 
   
-  /*
-  //
-  // print parameters
-  //
-  G4cout
-    << G4endl 
-    << "------------------------------------------------------------" << G4endl
-    << "---> The calorimeter is " << nofLayers << " layers of: [ "
-    << absoThickness/mm << "mm of " << absorberMaterial->GetName() 
-    << " + "
-    << gapThickness/mm << "mm of " << gapMaterial->GetName() << " ] " << G4endl
-    << "------------------------------------------------------------" << G4endl;
-  */
-  
-  //                                        
-  // Visualization attributes
-  //
-  /*
-  worldLV->SetVisAttributes (G4VisAttributes::GetInvisible());
-
-  auto simpleBoxVisAtt= new G4VisAttributes(G4Colour(1.0,1.0,1.0));
-  simpleBoxVisAtt->SetVisibility(true);
-  calorLV->SetVisAttributes(simpleBoxVisAtt);
-  */
-  //
-  // Always return the physical World
-  //
   return worldPV;
 }
 

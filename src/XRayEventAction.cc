@@ -42,10 +42,11 @@
 
 XRayEventAction::XRayEventAction()
  : G4UserEventAction(),
-   fEnergyAbs(0.),
-   fEnergyGap(0.),
-   fTrackLAbs(0.),
-   fTrackLGap(0.)
+  //fAnalysisManager(nullptr),
+  fEnergyDet(0.)
+  // fEnergyTar(0.),
+  // fTrackLDet(0.),
+  // fTrackLTar(0.)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -58,10 +59,11 @@ XRayEventAction::~XRayEventAction()
 void XRayEventAction::BeginOfEventAction(const G4Event* /*event*/)
 {  
   // initialisation per event
-  fEnergyAbs = 0.;
-  fEnergyGap = 0.;
-  fTrackLAbs = 0.;
-  fTrackLGap = 0.;
+  fEnergyDet = 0.;
+  //fEnergyGap = 0.;
+  //fTrackLAbs = 0.;
+  //fTrackLGap = 0.;
+  //fAnalysisManager = G4AnalysisManager::Instance();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -72,11 +74,13 @@ void XRayEventAction::EndOfEventAction(const G4Event* event)
   //
 
   // get analysis manager
+  
   auto analysisManager = G4AnalysisManager::Instance();
 
   // fill histograms
-  analysisManager->FillH1(0, fEnergyAbs);
-  analysisManager->FillH1(1, fEnergyGap);
+  if(fEnergyDet != 0.)
+    analysisManager->FillH1(0, fEnergyDet);
+  /*analysisManager->FillH1(1, fEnergyGap);
   analysisManager->FillH1(2, fTrackLAbs);
   analysisManager->FillH1(3, fTrackLGap);
   
@@ -106,6 +110,7 @@ void XRayEventAction::EndOfEventAction(const G4Event* event)
                                         << G4BestUnit(fTrackLGap,"Length")
        << G4endl;
   }
+  */
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
