@@ -48,7 +48,7 @@
 //#include "XRayPhysListEmStandardFLUO.hh"
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
-//#include "G4UAtomicDeexcitation.hh"
+#include "G4UAtomicDeexcitation.hh"
 
 #include "G4Decay.hh"
 #include "XRayStepMax.hh"
@@ -159,14 +159,13 @@ void XRayPhysicsList::ConstructProcess()
 
   // Em options
   //
-  G4EmProcessOptions emOptions;
-  emOptions.SetBuildCSDARange(true);
-  emOptions.SetDEDXBinningForCSDARange(10*10);
+  G4EmParameters* emParams = G4EmParameters::Instance();
+  //emOptions.SetBuildCSDARange(true);
+  //emOptions.SetDEDXBinningForCSDARange(10*10);
   //emOptions.SetDeexcitationActiveRegion(true); //TBC
-  emOptions.SetFluo(true);
-  emOptions.SetAuger(true);
-  emOptions.SetPIXE(true);
-
+  emParams->SetFluo(true);
+  emParams->SetAuger(true);
+  emParams->SetPixe(true);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -319,18 +318,18 @@ void XRayPhysicsList::SetCutForProton(G4double cut)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-//void XRayPhysicsList::SetFluorescence(G4bool value)
-//{
-//  G4VAtomDeexcitation* de = G4LossTableManager::Instance()->AtomDeexcitation();
-//  if(de) { de->SetFluo(value); }
-//}
+void XRayPhysicsList::SetFluorescence(G4bool value)
+{
+  G4VAtomDeexcitation* de = G4LossTableManager::Instance()->AtomDeexcitation();
+    if(de) { de->SetFluo(value); }
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-//void XRayPhysicsList::SetPIXE(G4bool value)
-//{
-//  G4VAtomDeexcitation* de = G4LossTableManager::Instance()->AtomDeexcitation();
-//  if(de) { de->SetPIXE(value); }
-//}
+void XRayPhysicsList::SetPIXE(G4bool value)
+{
+  G4VAtomDeexcitation* de = G4LossTableManager::Instance()->AtomDeexcitation();
+  if(de) { de->SetPIXE(value); }
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

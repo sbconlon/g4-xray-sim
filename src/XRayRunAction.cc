@@ -60,7 +60,8 @@ XRayRunAction::XRayRunAction()
   //
   
   // Creating histograms
-  analysisManager->CreateH1("EDet","Photon Energy Incident on the Detector", 1000, 0., 7*keV);
+  analysisManager->CreateH1("EDet","Photon Energy Incident on the Detector", 1000, 0., 7.*keV);
+  analysisManager->CreateH1("EDetFluo","Photo-Electric Effect Photon Energy Incident on the Detector", 1000, 0., 7.*keV);
   //analysisManager->CreateH1("Egap","Edep in gap", 100, 0., 100*MeV);
   //analysisManager->CreateH1("Labs","trackL in absorber", 100, 0., 1*m);
   //analysisManager->CreateH1("Lgap","trackL in gap", 100, 0., 50*cm);
@@ -120,22 +121,10 @@ void XRayRunAction::EndOfRunAction(const G4Run* /*run*/)
        << G4BestUnit(analysisManager->GetH1(0)->mean(), "Energy") 
        << " rms = " 
        << G4BestUnit(analysisManager->GetH1(0)->rms(),  "Energy") << G4endl;
-    /*
-    G4cout << " EGap : mean = " 
-       << G4BestUnit(analysisManager->GetH1(1)->mean(), "Energy") 
-       << " rms = " 
-       << G4BestUnit(analysisManager->GetH1(1)->rms(),  "Energy") << G4endl;
-    
-    G4cout << " LAbs : mean = " 
-      << G4BestUnit(analysisManager->GetH1(2)->mean(), "Length") 
-      << " rms = " 
-      << G4BestUnit(analysisManager->GetH1(2)->rms(),  "Length") << G4endl;
-
-    G4cout << " LGap : mean = " 
-      << G4BestUnit(analysisManager->GetH1(3)->mean(), "Length") 
-      << " rms = " 
-      << G4BestUnit(analysisManager->GetH1(3)->rms(),  "Length") << G4endl;
-    */
+    G4cout << " EDetFluo : mean = "
+       << G4BestUnit(analysisManager->GetH1(1)->mean(), "Energy")
+       << " rms = "
+       << G4BestUnit(analysisManager->GetH1(1)->mean(), "Energy") << G4endl;
   }
 
   // save histograms & ntuple

@@ -43,7 +43,8 @@
 XRayEventAction::XRayEventAction()
  : G4UserEventAction(),
   //fAnalysisManager(nullptr),
-  fEnergyDet(0.)
+  fEnergyDet(0.),
+  fEnergyDetFluo(0.)
   // fEnergyTar(0.),
   // fTrackLDet(0.),
   // fTrackLTar(0.)
@@ -59,8 +60,8 @@ XRayEventAction::~XRayEventAction()
 void XRayEventAction::BeginOfEventAction(const G4Event* /*event*/)
 {  
   // initialisation per event
-  fEnergyDet = 0.;
-  //fEnergyGap = 0.;
+  fEnergyDet     = 0.;
+  fEnergyDetFluo = 0.;
   //fTrackLAbs = 0.;
   //fTrackLGap = 0.;
   //fAnalysisManager = G4AnalysisManager::Instance();
@@ -80,7 +81,9 @@ void XRayEventAction::EndOfEventAction(const G4Event* event)
   // fill histograms
   if(fEnergyDet != 0.)
     analysisManager->FillH1(0, fEnergyDet);
-  /*analysisManager->FillH1(1, fEnergyGap);
+  if(fEnergyDetFluo != 0.)
+    analysisManager->FillH1(1, fEnergyDetFluo);
+  /*
   analysisManager->FillH1(2, fTrackLAbs);
   analysisManager->FillH1(3, fTrackLGap);
   

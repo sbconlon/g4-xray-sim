@@ -32,6 +32,7 @@
 #include "XRayDetectorConstruction.hh"
 
 #include "G4Step.hh"
+#include "G4VProcess.hh"
 #include "G4RunManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -63,11 +64,23 @@ void XRaySteppingAction::UserSteppingAction(const G4Step* step)
   //if ( step->GetTrack()->GetDefinition()->GetPDGCharge() != 0. ) {
   //  stepLength = step->GetStepLength();
   //}
-      
+  
   if ( volume == fDetConstruction->GetDetectorPV() ) {
-    auto Etot = step->GetTrack()->GetTotalEnergy();
+    // Get photon energy
+    G4double Etot = step->GetTrack()->GetTotalEnergy(); 
+    // Get creator process name
+    const G4VProcess* proc = step->GetTrack()->GetCreatorProcess();
+    G4String procName;
+    if(proc != nullptr)
+      procName = proc->GetProcessName();
+    else
+      procName = "NULL";
+    // Add the energy to the appropriate histograms
     fEventAction->AddDet(Etot);
+    if(procName == "phot")
+      fEventAction->AddDetFluo(Etot);
   }
+  
   
   //if ( volume == fDetConstruction->GetGapPV() ) {
   //  fEventAction->AddGap(edep,stepLength);

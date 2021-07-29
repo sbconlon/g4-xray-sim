@@ -68,7 +68,7 @@ private:
 
   G4String emName;
   G4VPhysicsConstructor* emPhysicsList;
-    
+  
   G4double cutForGamma;
   G4double cutForElectron;
   G4double cutForPositron;    

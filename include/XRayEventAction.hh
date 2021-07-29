@@ -51,14 +51,11 @@ class XRayEventAction : public G4UserEventAction
     virtual void    EndOfEventAction(const G4Event* event);
     
     void AddDet(G4double E);
-    //void AddGap(G4double de, G4double dl);
+    void AddDetFluo(G4double E);
     
   private:
-    //G4AnalysisManager* fAnalysisManager;
-    G4double  fEnergyDet;
-    //G4double  fEnergyGap;
-    //G4double  fTrackLAbs; 
-    //G4double  fTrackLGap;
+    G4double  fEnergyDet;       // Energy incident on detector
+    G4double  fEnergyDetFluo;   // Energy incident on detector from fluorescence photon
 };
 
 // inline functions
@@ -67,12 +64,12 @@ inline void XRayEventAction::AddDet(G4double E) {
   if(fEnergyDet == 0.)
     fEnergyDet = E;
 }
-/*
-inline void XRayEventAction::AddGap(G4double de, G4double dl) {
-  fEnergyGap += de; 
-  fTrackLGap += dl;
+
+inline void XRayEventAction::AddDetFluo(G4double E) {
+  if(fEnergyDetFluo == 0.)
+    fEnergyDetFluo = E;
 }
-*/                   
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
